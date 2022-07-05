@@ -1,0 +1,1 @@
+cmd_/home/ubuntu/workplace/DeviceDriver_Examples/base/modules.order := {   echo /home/ubuntu/workplace/DeviceDriver_Examples/base/hello.ko; :; } | awk '!x[$$0]++' - > /home/ubuntu/workplace/DeviceDriver_Examples/base/modules.order
