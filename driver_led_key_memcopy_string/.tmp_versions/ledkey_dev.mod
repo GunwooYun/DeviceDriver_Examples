@@ -1,0 +1,2 @@
+/home/ubuntu/workplace/DeviceDriver_Examples/driver_ledkey_memcopy_string/ledkey_dev.ko
+/home/ubuntu/workplace/DeviceDriver_Examples/driver_ledkey_memcopy_string/ledkey_dev.o

@@ -1,0 +1,2 @@
+/home/ubuntu/workplace/DeviceDriver_Examples/driver_led_key_ioctl/ledkey_dev.ko
+/home/ubuntu/workplace/DeviceDriver_Examples/driver_led_key_ioctl/ledkey_dev.o
