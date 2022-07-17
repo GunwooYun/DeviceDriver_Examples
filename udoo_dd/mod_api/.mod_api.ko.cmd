@@ -1,0 +1,1 @@
+cmd_/mnt/lect_nfs/udoo_dd/mod_api/mod_api.ko := arm-linux-gnueabihf-ld -EL -r  -T /home/ubuntu/udoo_linux_bsp/kernel/3.14.1/scripts/module-common.lds --build-id  -o /mnt/lect_nfs/udoo_dd/mod_api/mod_api.ko /mnt/lect_nfs/udoo_dd/mod_api/mod_api.o /mnt/lect_nfs/udoo_dd/mod_api/mod_api.mod.o

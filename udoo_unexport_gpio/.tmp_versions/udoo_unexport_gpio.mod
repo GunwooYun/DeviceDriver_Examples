@@ -1,0 +1,2 @@
+/home/ubuntu/workplace/DeviceDriver_Examples/udoo_unexport_gpio/udoo_unexport_gpio.ko
+/home/ubuntu/workplace/DeviceDriver_Examples/udoo_unexport_gpio/udoo_unexport_gpio.o

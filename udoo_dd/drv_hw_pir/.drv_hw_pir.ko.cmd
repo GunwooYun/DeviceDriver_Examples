@@ -1,0 +1,1 @@
+cmd_/mnt/lect_nfs/udoo_dd/drv_hw_pir/drv_hw_pir.ko := arm-linux-gnueabihf-ld -EL -r  -T /home/ubuntu/udoo_linux_bsp/kernel/3.14.1/scripts/module-common.lds --build-id  -o /mnt/lect_nfs/udoo_dd/drv_hw_pir/drv_hw_pir.ko /mnt/lect_nfs/udoo_dd/drv_hw_pir/drv_hw_pir.o /mnt/lect_nfs/udoo_dd/drv_hw_pir/drv_hw_pir.mod.o

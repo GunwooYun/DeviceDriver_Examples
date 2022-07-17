@@ -1,0 +1,1 @@
+cmd_/mnt/lect_nfs/udoo_dd/udoo_unexport_gpio/udoo_unexport_gpio.ko := arm-linux-gnueabihf-ld -EL -r  -T /home/ubuntu/udoo_linux_bsp/kernel/3.14.1/scripts/module-common.lds --build-id  -o /mnt/lect_nfs/udoo_dd/udoo_unexport_gpio/udoo_unexport_gpio.ko /mnt/lect_nfs/udoo_dd/udoo_unexport_gpio/udoo_unexport_gpio.o /mnt/lect_nfs/udoo_dd/udoo_unexport_gpio/udoo_unexport_gpio.mod.o

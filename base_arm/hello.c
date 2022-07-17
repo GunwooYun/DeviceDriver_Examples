@@ -4,7 +4,6 @@
 
 static int hello_init(void){
 	printk("Hello, world \n");
-
 	return 0;
 }
 
