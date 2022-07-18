@@ -1,1 +1,0 @@
-cmd_/home/ubuntu/workplace/DeviceDriver_Examples/printk/hello.mod := { echo  /home/ubuntu/workplace/DeviceDriver_Examples/printk/hello.o;  echo; } > /home/ubuntu/workplace/DeviceDriver_Examples/printk/hello.mod

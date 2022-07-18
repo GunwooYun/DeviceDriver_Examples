@@ -1,1 +1,0 @@
-cmd_/home/ubuntu/workplace/DeviceDriver_Examples/printk/Module.symvers := sed 's/\.ko$$/\.o/' /home/ubuntu/workplace/DeviceDriver_Examples/printk/modules.order | scripts/mod/modpost -m -a  -o /home/ubuntu/workplace/DeviceDriver_Examples/printk/Module.symvers -e -i Module.symvers   -T -
