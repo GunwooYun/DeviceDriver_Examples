@@ -1,19 +1,24 @@
+/*
+	Module Paramter LED example on UDOO
+	Usage : ./app 0xf
+*/
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
 #include <linux/gpio.h>
-//#include <linux/stdio.h>
 #include <linux/moduleparam.h>
 
 #define DEBUG 1
+/* Macro function of returning port number */
 #define IMX_GPIO_NR(bank, nr)       (((bank) - 1) * 32 + (nr))
 
-static unsigned int ledVal = 0;
+static unsigned int ledVal = 0; // value of led port of UDOO
 static char * twostring = NULL;
 
 module_param(ledVal, uint , 0);
 module_param(twostring ,charp, 0);
 
+/* Return port number */
 static int led[] = {
 	IMX_GPIO_NR(1, 16),   //16
 	IMX_GPIO_NR(1, 17),   //17
@@ -21,6 +26,7 @@ static int led[] = {
 	IMX_GPIO_NR(1, 19),   //19
 };
 
+/* Print kernel message that which LED ON or NOT */
 void led_status(unsigned long data){
 	int i = 0;
 	while(i < 4){
@@ -56,7 +62,7 @@ static void led_exit(void)
 {
 	int i;
 	for (i = 0; i < ARRAY_SIZE(led); i++){
-		gpio_free(led[i]); // If not exec, next call function return value <0
+		gpio_free(led[i]); // If not exec, next call function return value< 0
 	}
 }
 
@@ -73,18 +79,18 @@ void led_write(unsigned long data)
 }
 
 static int led_on(void){
-	led_init();
+	led_init(); // Reserve GPIO ports and set ports OUTPUT
 	printk("Hello, world [ledvalue=%d:twostring=%s]\n",ledVal,twostring);
-	led_write(ledVal);
-	led_status(ledVal);
+	led_write(ledVal); // LED ON
+	led_status(ledVal); // Print LED status
 
 	return 0;
 }
 
 static void led_off(void){
-	led_write(0x00);
-	led_status(0x00);
-	led_exit();
+	led_write(0x00); // LED OFF
+	led_status(0x00); // Print status 0
+	led_exit(); // Set ports free
 }
 
 /* moudle_init, module_exit macro function */

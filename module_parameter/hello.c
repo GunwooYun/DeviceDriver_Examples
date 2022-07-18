@@ -1,5 +1,6 @@
 /*
-   Module Paramter / p.119
+	Module Paramter / p.119
+	Usage : insmod test.o onevalue=0xff twostring="Hello,World"
 */
 #include <linux/init.h>
 #include <linux/module.h>
