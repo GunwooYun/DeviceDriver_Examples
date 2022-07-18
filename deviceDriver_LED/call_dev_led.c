@@ -1,3 +1,11 @@
+/*
+    Device Driver LED
+	Write function to control LED of UDOO
+    file : call_dev_led.c
+    module name : leddev
+    Page: 218
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -31,7 +39,7 @@ static int led_init(void)
         if(ret<0){
             printk("#### FAILED Request gpio %d. error : %d \n", led[i], ret);
         }
-        gpio_direction_output(led[i], 1);// port, value
+        gpio_direction_output(led[i], 1);// Set gpio direction output
     }
     return ret;
 }
@@ -59,17 +67,6 @@ void led_read(char * led_data)
         temp = gpio_get_value(led[i]) << i;
         data |= temp;
     }
-/*
-    for(i=3;i>=0;i--)
-    {
-        gpio_direction_input(led[i]); //error led all turn off
-        temp = gpio_get_value(led[i]);
-        data |= temp;
-        if(i==0)
-            break;
-        data <<= 1;  //data <<= 1;
-    }
-*/
 #if DEBUG
     printk("#### %s, data = %ld\n", __FUNCTION__, data);
 #endif
@@ -82,26 +79,20 @@ static void led_exit(void)
 {
     int i;
     for (i = 0; i < ARRAY_SIZE(led); i++){
-        gpio_free(led[i]); // If not exec, next call function return value <0
+        gpio_free(led[i]); // If not exec, next call function return value < 0
     }
 }
 
 static int call_open(struct inode *inode, struct file *filp)
 {
 	/* MINOR, MAJOR <- macro function, masking bit */
-	//int num = MINOR(inode->i_rdev);
-	//printk("call open -> minor : %d\n", num);
-	//num = MAJOR(inode->i_rdev);
-	//printk("call open -> major : %d\n", num);
+	int num = MINOR(inode->i_rdev);
+	printk("call open -> minor : %d\n", num);
+	num = MAJOR(inode->i_rdev);
+	printk("call open -> major : %d\n", num);
 
 	led_init();
 	return 0;
-}
-
-static loff_t call_llseek(struct file *filp, loff_t off, int whence)
-{
-	printk("call llseek -> off : %08X, whence : %08X\n", (unsigned int)off, whence);
-	return 0x23;
 }
 
 static ssize_t call_read(struct file *filp, char *buf, size_t count, loff_t *f_pos)
@@ -113,32 +104,22 @@ static ssize_t call_read(struct file *filp, char *buf, size_t count, loff_t *f_p
 static ssize_t call_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos)
 {
 	//printk("call write -> buf : %08X, count : %08X\n", (unsigned int)buf, count);
-	led_write((unsigned long)*buf);
+	led_write((unsigned long)*buf); // buf is parameter from app
 	return 0;
 }
-
-static long call_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
-{
-	printk("call ioctl -> cmd : %08X, arg : %08X\n", cmd, (unsigned int)arg);
-	return 0x53;
-}
-
 static int call_release(struct inode *inode, struct file *filp)
 {
 	printk("call release \n");
-	led_exit();
+	led_exit(); // gpio free
 	return 0;
 }
-
 
 struct file_operations call_fops =
 {
 	/* function pointer */
 	.owner = THIS_MODULE,
-	.llseek = call_llseek,
 	.read = call_read,
 	.write = call_write,
-	.unlocked_ioctl = call_ioctl,
 	.open = call_open,
 	.release = call_release,
 };
@@ -147,8 +128,8 @@ static int call_init(void)
 {
 	int result;
 	printk("call call_init \n");
-	/* Register file_operation struct */
-	result = register_chrdev(CALL_DEV_MAJOR, CALL_DEV_NAME, &call_fops); // Register file_operation to character devices[MAX_PROBE_HASH] with MAJOR num(index) & name
+	/* Register file_operation to character devices[MAX_PROBE_HASH] with MAJOR num(index) & name */
+	result = register_chrdev(CALL_DEV_MAJOR, CALL_DEV_NAME, &call_fops); 
 	if(result < 0) return result;
 	return 0;
 }
@@ -156,7 +137,7 @@ static int call_init(void)
 static void call_exit(void)
 {
 	printk("call call_exit \n");
-	led_write(0);
+	led_write(0); // LED OFF
 	unregister_chrdev(CALL_DEV_MAJOR, CALL_DEV_NAME); // Unregister file_operation
 }
 
