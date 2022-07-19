@@ -1,3 +1,11 @@
+/*
+    Device Driver write and read string
+    function read and write with string value
+    file : ledkey_dev.c
+    device file : /dev/ledkey
+    Page: example
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -124,13 +132,14 @@ static ssize_t ledkey_read(struct file *filp, char *buf, size_t count, loff_t *f
 	int len;
 	int i;
 	char kbuf[20]={"key0"};
-	key_read(&keyno);
-	keyno += 0x30;
+	key_read(&keyno); // Get keyno
+	keyno += 0x30; // 0x0011____
 	kbuf[3] = keyno;
-	len = strlen(kbuf);
+	len = strlen(kbuf); // get array length
 
 	for(i=0;i<len;i++)
 	{
+		/* write kbuf[i] to user level space buf */
 		put_user(kbuf[i],buf++);
 	}
 //	copy_to_user(buf,kbuf,len);
@@ -143,11 +152,12 @@ static ssize_t ledkey_write (struct file *filp, const char *buf, size_t count, l
 	int i;
   	for(i=0;i<count;i++)
 	{
+		/* Store buf to kbuf */
 		get_user(kbuf[i],buf++);
 	}
 //	copy_from_user(kbuf,buf,count);
 	
-	led_write(kbuf[3]-0x30);
+	led_write(kbuf[3]-0x30); // ledkey_read() ->  keyno += 0x30;
     return count;
 //	return -EFAULT;
 }

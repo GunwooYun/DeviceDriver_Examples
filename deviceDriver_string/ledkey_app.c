@@ -1,3 +1,10 @@
+/*
+    Device Driver write and read string 
+	function read and write with string value
+    file : ledkey_app.c
+    device file : /dev/ledkey
+    Page: example
+*/
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -21,10 +28,12 @@ int main()
 		perror("open()");
 		return 1;
 	}
+	/* Write string to kernel */
     ret = write(dev,buff,strlen(buff));
 	if(ret < 0)
 		perror("write()");
 	do {
+		/* Read string from kernel */
     	ret = read(dev,buff,sizeof(buff));              
   		if(ret < 0)
   			perror("read()");
