@@ -19,5 +19,5 @@
 * deviceDriver_basic : 디바이스드라이버 기본 예제, file_operations / p.170   
 * deviceDriver_LED : 디바이스드라이버를 이용한 LED 제어 on UDOO / p.218   
 * deviceDriver_LED_KEY : 키스위치를 눌러 LED 제어 on UDOO / p.236   
-* deviceDriver_LED_KEY_copy : copy_from_user(write()), copy_to_user(read()) / p.250   
+* deviceDriver_LED_KEY_copy : 시스템콜함수 copy_from_user(write()), copy_to_user(read()) 으로 LED, key 제어 / p.250   
 
