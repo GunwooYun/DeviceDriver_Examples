@@ -1,3 +1,11 @@
+/*
+    Device Driver using function ioctl
+    Use ioctl to control LED and get KEY data of UDOO
+    file : ledkey_app.c
+    device file : /dev/ledkey
+    Page: 294
+*/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>

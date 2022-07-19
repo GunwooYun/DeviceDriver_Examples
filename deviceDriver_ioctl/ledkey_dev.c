@@ -1,3 +1,11 @@
+/*
+    Device Driver using function ioctl
+    Use ioctl to control LED and get KEY data of UDOO
+    file : ledkey_dev.c
+    device driver name : ioctldev
+    Page: 294
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -88,6 +96,7 @@ static void led_write(char data)
 	printk("#### %s, data = %d\n", __FUNCTION__, data);
 #endif
 }
+
 static void key_read(char * key_data)
 {
 	int i;
@@ -95,7 +104,7 @@ static void key_read(char * key_data)
 //	char temp;
 	for(i=0;i<ARRAY_SIZE(key);i++)
 	{
-		if(gpio_get_value(key[i]))
+		if(gpio_get_value(key[i])) // Check key
 		{
 			data = i+1;
 			break;
@@ -109,6 +118,7 @@ static void key_read(char * key_data)
 	*key_data = data;
 	return;
 }
+
 static int ledkey_open (struct inode *inode, struct file *filp)
 {
     int num0 = MAJOR(inode->i_rdev); 
