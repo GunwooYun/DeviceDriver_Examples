@@ -1,3 +1,11 @@
+/*
+    Device Driver LED & KEY using copy func on UDOO
+    copy function to control LED and get KEY data of UDOO
+    file : ledkey_app.c
+    device file : /dev/ledkey
+    Page: 250
+*/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>

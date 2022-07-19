@@ -1,3 +1,11 @@
+/*
+    Device Driver LED & KEY using copy func on UDOO
+    copy function to control LED and get KEY data of UDOO
+    file : ledkey_dev.c
+    device driver name : ledkey
+    Page: 250
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -34,6 +42,8 @@ static int led[] = {
 	IMX_GPIO_NR(1, 18),   //18
 	IMX_GPIO_NR(1, 19),   //19
 };
+
+/* GPIO port of LED initialize */
 static int led_init(void)
 {
 	int ret = 0;
@@ -48,6 +58,7 @@ static int led_init(void)
 	return ret;
 }
 
+/* GPIO port of KEY initialize */
 static int key_init(void)
 {
 	int ret = 0;
@@ -92,16 +103,14 @@ void led_write(unsigned long data)
 //void led_read(unsigned long * led_data)
 void key_read(char * key_data)
 {
-	int i, j = 0;
+	int i;
 	unsigned long data=0;
 	unsigned long temp;
 	*key_data = 0;
 	for(i=0;i<8;i++)
 	{
-  		gpio_direction_input(key[i]); //error led all turn off
-		//if(gpio_get_value(key[i]))
-	//		j = i;
-		temp = gpio_get_value(key[i]) << i;
+  		gpio_direction_input(key[i]); // Set GPIO port input
+		temp = gpio_get_value(key[i]) << i; // Get value from GPIO
 		data |= temp;
 		
 	}
@@ -110,18 +119,6 @@ void key_read(char * key_data)
 		if((data >> i ) & 0x01)
 			*key_data = i+1;
 	}
-			
-/*	
-	for(i=3;i>=0;i--)
-	{
-  		gpio_direction_input(led[i]); //error led all turn off
-		temp = gpio_get_value(led[i]);
-		data |= temp;
-		if(i==0)
-			break;
-		data <<= 1;  //data <<= 1;
-	}
-*/
 #if DEBUG
 	printk("#### %s, data = %ld\n", __FUNCTION__, data);
 #endif
@@ -130,6 +127,7 @@ void key_read(char * key_data)
   	///led_write(data);
 	return;
 }
+
 int call_open (struct inode *inode, struct file *filp)
 {
     int num0 = MAJOR(inode->i_rdev); 
@@ -141,20 +139,25 @@ int call_open (struct inode *inode, struct file *filp)
     return 0;
 }
 
+/*
 loff_t call_llseek (struct file *filp, loff_t off, int whence )
 {
     printk( "call llseek -> off : %08X, whenec : %08X\n", (unsigned int)off, whence );
     return 0x23;
 }
+*/
 
 ssize_t call_read(struct file *filp, char *buf, size_t count, loff_t *f_pos)
 {
-    //printk( "call read -> buf : %08X, count : %08X \n", (unsigned int)buf, count );
-	//key_read(buf);
 	int ret;
 	char kbuf;
 	key_read(&kbuf);
 	//put_user(kbuf, buf); // put_user(value, ptr)
+
+
+	/* app       kernel     */
+	/* read -> write to user*/
+	/* int copy_to_user(void __user *to, const void *from, unsigned long n) */
 	ret = copy_to_user(buf, &kbuf, count);
 
 	/* If need to write array */
@@ -173,7 +176,10 @@ ssize_t call_write (struct file *filp, const char *buf, size_t count, loff_t *f_
 	char kbuf;
 	int ret;
 	//get_user(kbuf, buf); // Read data from user level first
-	ret = copy_from_user(&kbuf, buf, count);
+	/* app       kernel     */
+	/* write -> read from user*/
+	/* int copy_to_user(void *to, const void__user *from, unsigned long n) */
+	ret = copy_from_user(&kbuf, buf, count); // Save data to from from data
 	led_write(kbuf); // Write data to kernel
     return count;
 }
@@ -197,7 +203,7 @@ int call_release (struct inode *inode, struct file *filp)
 struct file_operations call_fops =
 {
     .owner    = THIS_MODULE,
-    .llseek   = call_llseek,   
+    //.llseek   = call_llseek,   
     .read     = call_read,     
     .write    = call_write,    
 //    .ioctl    = call_ioctl,    
