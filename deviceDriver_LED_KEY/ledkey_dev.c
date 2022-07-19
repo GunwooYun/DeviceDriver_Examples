@@ -1,3 +1,10 @@
+/*
+    Device Driver LED & KEY on UDOO
+    Write function to control LED and get KEY data of UDOO
+    file : ledkey_dev.c
+    device driver name : ledkey
+    Page: 236
+*/
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -14,6 +21,7 @@
 #define DEBUG 1
 #define IMX_GPIO_NR(bank, nr)       (((bank) - 1) * 32 + (nr))
 
+/* key port numbers */
 static int key[] = {
 	IMX_GPIO_NR(1, 20), // SW1
 	IMX_GPIO_NR(1, 21),
@@ -25,12 +33,15 @@ static int key[] = {
  	IMX_GPIO_NR(1, 8), // SW8
 };
 
+/* LED port numbers */
 static int led[] = {
 	IMX_GPIO_NR(1, 16),   //16
 	IMX_GPIO_NR(1, 17),	  //17
 	IMX_GPIO_NR(1, 18),   //18
 	IMX_GPIO_NR(1, 19),   //19
 };
+
+/* Initialize GPIO of LED */
 static int led_init(void)
 {
 	int ret = 0;
@@ -45,13 +56,14 @@ static int led_init(void)
 	return ret;
 }
 
+/* Initialize GPIO of KEY */
 static int key_init(void)
 {
 	int ret = 0;
 	int i;
 
 	for (i = 0; i < ARRAY_SIZE(key); i++) {
-		ret = gpio_request(key[i], "gpio key");
+		ret = gpio_request(key[i], "gpio key"); // Get value from GPIO
 		if(ret<0){
 			printk("#### FAILED Request gpio %d. error : %d \n", key[i], ret);
 		} 
@@ -59,6 +71,7 @@ static int key_init(void)
 	return ret;
 }
 
+/* Free LED ports */
 static void led_exit(void)
 {
 	int i;
@@ -67,6 +80,7 @@ static void led_exit(void)
 	}
 }
 
+/* Free KEY ports */
 static void key_exit(void)
 {
 	int i;
@@ -80,53 +94,38 @@ void led_write(unsigned long data)
 	int i;
 	for(i = 0; i < ARRAY_SIZE(led); i++){
 		gpio_direction_output(led[i], (data >> i ) & 0x01);
-//		gpio_set_value(led[i], (data >> i ) & 0x01);
 	}
 #if DEBUG
 	printk("#### %s, data = %ld\n", __FUNCTION__, data);
 #endif
 }
-//void led_read(unsigned long * led_data)
 void key_read(char * key_data)
 {
-	int i, j = 0;
+	int i;
 	unsigned long data=0;
 	unsigned long temp;
 	*key_data = 0;
 	for(i=0;i<8;i++)
 	{
-  		gpio_direction_input(key[i]); //error led all turn off
-		//if(gpio_get_value(key[i]))
-	//		j = i;
-		temp = gpio_get_value(key[i]) << i;
+  		gpio_direction_input(key[i]); // Set GPIO port mode input
+		temp = gpio_get_value(key[i]) << i; // Get value from GPIO port
 		data |= temp;
 		
 	}
 	
+	/* Find which switch active */
 	for(i=0;i<8;i++){
-		if((data >> i ) & 0x01)
-			*key_data = i+1;
-	}
-			
-/*	
-	for(i=3;i>=0;i--)
-	{
-  		gpio_direction_input(led[i]); //error led all turn off
-		temp = gpio_get_value(led[i]);
-		data |= temp;
-		if(i==0)
+		if((data >> i ) & 0x01){
+			*key_data = i+1; // key number starts from 1
 			break;
-		data <<= 1;  //data <<= 1;
+		}
 	}
-*/
 #if DEBUG
 	printk("#### %s, data = %ld\n", __FUNCTION__, data);
 #endif
-	//*key_data = (char)data;
-	//*key_data = j;
-  	///led_write(data);
 	return;
 }
+
 int call_open (struct inode *inode, struct file *filp)
 {
     int num0 = MAJOR(inode->i_rdev); 
@@ -138,11 +137,13 @@ int call_open (struct inode *inode, struct file *filp)
     return 0;
 }
 
+/*
 loff_t call_llseek (struct file *filp, loff_t off, int whence )
 {
     printk( "call llseek -> off : %08X, whenec : %08X\n", (unsigned int)off, whence );
     return 0x23;
 }
+*/
 
 ssize_t call_read(struct file *filp, char *buf, size_t count, loff_t *f_pos)
 {
@@ -177,7 +178,7 @@ int call_release (struct inode *inode, struct file *filp)
 struct file_operations call_fops =
 {
     .owner    = THIS_MODULE,
-    .llseek   = call_llseek,   
+//    .llseek   = call_llseek,   
     .read     = call_read,     
     .write    = call_write,    
 //    .ioctl    = call_ioctl,    
