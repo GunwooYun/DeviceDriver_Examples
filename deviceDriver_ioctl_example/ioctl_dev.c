@@ -1,3 +1,11 @@
+/*
+    Device Driver ioctl on UDOO
+    ioctl cmd controls LED on/off, reads key
+    file : ioctl_dev.c
+    device driver name : ioctldev
+    Page: 302
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -110,6 +118,7 @@ static void key_read(char * key_data)
 	return;
 }
 
+/*
 static void key_read_ioctl(ioctl_test_info * info){
 	int i;
 	char data=0;
@@ -130,6 +139,7 @@ static void key_read_ioctl(ioctl_test_info * info){
 	info->buff[0] = data;
 	return;
 }
+*/
 
 static int ledkey_open (struct inode *inode, struct file *filp)
 {

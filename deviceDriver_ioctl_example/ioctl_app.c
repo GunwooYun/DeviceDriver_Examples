@@ -1,3 +1,11 @@
+/*
+    Device Driver ioctl on UDOO
+    ioctl cmd controls LED on/off, reads key
+    file : ioctl_app.c
+    device file : /dev/ioctldev
+    Page: 302
+*/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -58,6 +66,7 @@ int main()
 		{
 			info.size = 1;
 			info.buff[0] = state;
+			/* write first, then read data */
 			ret = ioctl(dev, IOCTLTEST_WRITE_READ, &info );
 			/* error 일경우 */
 			if(ret < 0)
