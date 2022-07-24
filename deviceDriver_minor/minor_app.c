@@ -1,3 +1,10 @@
+/*
+    Device Driver exc;uted with minor number
+    file : minor_app.c
+    device file : /dev/minor_write
+				  /dev/minor_write
+    Page : 264
+*/
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>

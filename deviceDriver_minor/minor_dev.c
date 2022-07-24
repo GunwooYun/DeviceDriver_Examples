@@ -1,3 +1,11 @@
+/*
+    Device Driver minor number
+    function gets excuted with minor number
+    file : minor_dev.c
+    moudle name : minordev
+    Page : 264
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -110,6 +118,7 @@ static int minor2_release (struct inode *inode, struct file *filp)
     return 0;
 }
 
+/* minor number : 1 */
 struct file_operations minor1_fops =
 {
     .owner    = THIS_MODULE,
@@ -118,6 +127,7 @@ struct file_operations minor1_fops =
     .release  = minor1_release,
 };
 
+/* minor number : 2 */
 struct file_operations minor2_fops =
 {
     .owner    = THIS_MODULE,
@@ -126,20 +136,20 @@ struct file_operations minor2_fops =
     .release  = minor2_release,
 };
 
+/* open file depend on inode->i_rdev */
 static int minor_open (struct inode *inode, struct file *filp)
 {
     printk( "call minor_open\n" );
 	/* Devide which minor number */
-    switch (MINOR(inode->i_rdev)) 
+    switch (MINOR(inode->i_rdev)) // return minor
     {
     case 1: filp->f_op = &minor1_fops; break;
     case 2: filp->f_op = &minor2_fops; break;
     default : return -ENXIO;
     }
     
-
     if (filp->f_op && filp->f_op->open)
-        return filp->f_op->open(inode,filp);
+        return filp->f_op->open(inode,filp); // open with indicated minor
         
     return 0;
 }
@@ -192,7 +202,7 @@ static void led_free(void)
 struct file_operations minor_fops =
 {
     .owner    = THIS_MODULE,
-    .open     = minor_open,     
+    .open     = minor_open,
 };
 
 static int minor_init(void)
