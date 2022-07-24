@@ -1,3 +1,7 @@
+/*
+   local time
+   special example
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
