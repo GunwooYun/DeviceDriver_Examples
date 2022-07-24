@@ -29,4 +29,5 @@
 * kernelTimer_basic : 커널타이머 기본 예제 / p.319   
 * kernelTimer_dev : 커널타이머 디바이스드라이버 / p.333   
 * kernelTimer_global_ptrmng : ptrmng 전역변수 선언 / p.328   
-* 
+### etc
+* localtimer : 로컬 타이머 예제   
