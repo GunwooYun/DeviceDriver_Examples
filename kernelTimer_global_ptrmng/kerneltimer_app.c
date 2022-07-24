@@ -1,3 +1,9 @@
+/*
+   device driver kernel timer
+   kernel timer with global timer variable
+   file : /dev/kerneltimer
+   p.328
+*/
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>

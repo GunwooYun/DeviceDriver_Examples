@@ -1,3 +1,9 @@
+/*
+   device driver kernel timer
+   kernel timer with global timer variable
+   driver name : kerneltimer
+   p.328
+*/
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -31,7 +37,7 @@ typedef struct
 	unsigned long 	  led;
 } __attribute__ ((packed)) KERNEL_TIMER_MANAGER;
 
-static KERNEL_TIMER_MANAGER* ptrmng = NULL;
+static KERNEL_TIMER_MANAGER* ptrmng = NULL; // Declare global to be used in any functions
 void kerneltimer_timeover(unsigned long arg);
 void kerneltimer_registertimer(KERNEL_TIMER_MANAGER *pdata, unsigned long timeover);
 
