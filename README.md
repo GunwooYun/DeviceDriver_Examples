@@ -23,3 +23,4 @@
 * deviceDriver_ioctl : 디바이스를 ioctl() 커맨드 제어 / p.294   
 * deviceDriver_ioctl_example : ioctl() 을 이용한 실습   
 * deviceDriver_string : read(), write() 함수에 문자열 처리 실습   
+* deviceDriver_minor : minor 번호에 따라 operation 변경 실행 / p.264   
