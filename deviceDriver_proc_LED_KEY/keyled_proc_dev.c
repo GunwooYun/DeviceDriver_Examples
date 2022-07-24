@@ -1,7 +1,7 @@
 /*
    Device Driver proc
    control gpio using proc file system
-   page : 517
+   page : 527
 */
 
 #include <linux/init.h>
