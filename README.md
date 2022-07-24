@@ -11,9 +11,9 @@
 * IT EXPERT 리눅스 드라이버 유영창 저 (한빛미디어)   
 ## Directories   
 ### module   
-* module_basic_arm : ARM 모듈 기본 예제 / P.106   
-* module_basic_x86 : X86 모듈 기본 예제 / P.106   
-* module_parameter : 모듈 매개변수 예제 / P.119   
+* module_basic_arm : ARM 모듈 기본 예제 / p.106   
+* module_basic_x86 : X86 모듈 기본 예제 / p.106   
+* module_parameter : 모듈 매개변수 예제 / p.119   
 * module_parameter_LED_arm : UDOO 보드에서 모듈(매개변수)을 이용한 LED 컨트롤   
 ### Device Driver
 * deviceDriver_basic : 디바이스드라이버 기본 예제, file_operations / p.170   
