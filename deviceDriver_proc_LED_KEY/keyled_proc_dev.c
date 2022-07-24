@@ -1,3 +1,9 @@
+/*
+   Device Driver proc
+   control gpio using proc file system
+   page : 517
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -217,18 +223,20 @@ static int write_ledproc_val( struct file *file, const char __user *buffer, unsi
 }
 static void mkproc(void)
 {
-	keyledproc_root_fp  = proc_mkdir( "keyled", 0 );
+	keyledproc_root_fp  = proc_mkdir( "keyled", 0 ); // two arg : 1. dir name 2. if make /proc/ then 0
 
+	/* create_proc_entry(file_name, file option, address of proc_dir_entry) */
 	keyledproc_led_fp   = create_proc_entry( "led", S_IFREG | S_IRWXU, keyledproc_root_fp );
 	if( keyledproc_led_fp )
 	{
-		keyledproc_led_fp->data       = &proc_led_no;
-		keyledproc_led_fp->read_proc  = read_ledproc_val;
-		keyledproc_led_fp->write_proc = write_ledproc_val;
+		keyledproc_led_fp->data       = &proc_led_no; // data
+		keyledproc_led_fp->read_proc  = read_ledproc_val; // bind read func
+		keyledproc_led_fp->write_proc = write_ledproc_val; // bind write func
 	}
 }
 static void rmproc(void)
 {
+	/* Remove file, dir */
 	remove_proc_entry( "led"  , keyledproc_root_fp );
 	remove_proc_entry( "keyled" , 0 );
 }
