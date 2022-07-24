@@ -25,7 +25,6 @@
 * deviceDriver_string : read(), write() 함수에 문자열 처리 실습   
 * deviceDriver_minor : minor 번호에 따라 operation 변경 실행 / p.264   
 * deviceDrvier_interrupt_basic : 인터럽트를 이용한 GPIO 값 read / p.343   
-* deviceDriver_blocking : blocking io / p.383   
 * deviceDriver_proc_basic : proc 파일시스템 기본 예제 / p.517   
 * deviceDriver_proc_LED_KEY : proc 파일시스템 / p.527   
 
@@ -37,7 +36,12 @@
 ### blocking
 * blocking_basic : 블로킹 I/O basic / p.383   
 * blocking_poll : 다중입출력 poll / p.424   
+* deviceDriver_blocking : blocking 실습   
+
+### proc filesystem
+* proc_basic : proc 파일시스템 기본 예제 / p.517   
 * 
+
 ### etc
 * localtimer : 로컬 타이머 예제   
 * udoo_examples : udoo board 예제   
