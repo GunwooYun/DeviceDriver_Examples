@@ -1,3 +1,7 @@
+/* device driver bloking
+   bloking mode basic
+   page 383
+*/
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -27,33 +31,27 @@
 
 #include "ioctl_test.h"
 
-#define   CALL_DEV_NAME            "ledkey_poll"
+#define   CALL_DEV_NAME            "ledkey_ncs"
 #define   CALL_DEV_MAJOR            240      
 
 #define DEBUG 0
 #define IMX_GPIO_NR(bank, nr)       (((bank) - 1) * 32 + (nr))
 
-#define TIME_STEP timeval
+//#define TIME_STEP timeval
 
 DECLARE_WAIT_QUEUE_HEAD(WaitQueue_Read); // Make wait queue
 
-//static uint64_t curTime = 0;
-//static uint64_t preTime = 0;
-//static unsigned int diffTime = 0;
-
-//static unsigned long jiffies = 0;
-
 typedef struct
 {
-    struct timer_list timer;
-    unsigned long     led;
-	int time_val;
+    struct			timer_list timer;
+    unsigned long	led;
+	int				time_val;
 } __attribute__ ((packed)) KERNEL_TIMER_MANAGER;
 
 static int sw_irq[8] = {0}; // IRQ number
 static long sw_no = 0;
 
-static char timeval = 0;
+//static char timeval = 0;
 
 void kerneltimer_timeover(unsigned long arg);
 
@@ -137,16 +135,6 @@ static void led_exit(void)
 	}
 }
 
-/*
-static void key_exit(void)
-{
-	int i;
-	for (i = 0; i < ARRAY_SIZE(key); i++){
-		gpio_free(key[i]);
-	}
-}
-*/
-
 static void key_irq_exit(void)
 {
 	int i;
@@ -187,59 +175,9 @@ void kerneltimer_timeover(unsigned long arg)
         printk("led : %#04x, key : %#04x \n",(unsigned int)(pdata->led & 0x0000000f),(unsigned int)pdata->key);
 #endif
         pdata->led = ~(pdata->led);
-        kerneltimer_registertimer( pdata, TIME_STEP);
+        kerneltimer_registertimer( pdata, pdata->time_val);
     }
 }
-
-
-#if 0
-//void led_read(unsigned long * led_data)
-void key_read(char * key_data)
-{
-	int i;
-	//unsigned long data=0;
-	//unsigned long temp;
-	*key_data = 0;
-	for(i=0;i<8;i++)
-	{
-  		gpio_direction_input(key[i]); //error led all turn off
-		if(gpio_get_value(key[i])){
-			*key_data = i + 1;
-			break;
-		}
-
-		//temp = gpio_get_value(key[i]) << i;
-		//data |= temp;
-		
-	}
-	
-	/*
-	for(i=0;i<8;i++){
-		if((data >> i ) & 0x01)
-			*key_data = i+1;
-	}
-	*/
-			
-/*	
-	for(i=3;i>=0;i--)
-	{
-  		gpio_direction_input(led[i]); //error led all turn off
-		temp = gpio_get_value(led[i]);
-		data |= temp;
-		if(i==0)
-			break;
-		data <<= 1;  //data <<= 1;
-	}
-*/
-#if DEBUG
-	printk("#### %s, data = %ld\n", __FUNCTION__, data);
-#endif
-	//*key_data = (char)data;
-	//*key_data = j;
-  	///led_write(data);
-	return;
-}
-#endif
 
 int call_open (struct inode *inode, struct file *filp)
 {
@@ -273,15 +211,6 @@ ssize_t call_read(struct file *filp, char *buf, size_t count, loff_t *f_pos)
 		if(!sw_no){
 			/* Go to sleep */
 			interruptible_sleep_on(&WaitQueue_Read); // if sw_no == 0 then sleep
-
-			//curTime = get_jiffies_64();
-			//diffTime = curTime - preTime;
-			//preTime = curTime;
-			//printk("### interval : %d \n", diffTime);
-			//wait_event_interruptible(WaitQueue_Read, sw_no); // If sw_no == 0 then sleep (No need if)
-			//wait_event_interruptible_timeout(WaitQueue_Read, sw_no, 100); // 10 * 1 / HZ = 0.1sec
-
-			//if(!sw_no) return 0;
 		}
 	}
 	kbuf = (char)sw_no;
@@ -297,20 +226,14 @@ ssize_t call_write (struct file *filp, const char *buf, size_t count, loff_t *f_
 
 	char kbuf;
 	int ret;
-	//get_user(kbuf, buf); // Read data from user level first
 	ret = copy_from_user(&kbuf, buf, count);
-	//led_write(kbuf); // Write data to kernel
 	ptrmng->led = (unsigned long)kbuf;
     return count;
 }
 
-//int call_ioctl (struct inode *inode, struct file *filp, unsigned int cmd, unsigned long arg)
 static long call_ioctl (struct file *filp, unsigned int cmd, unsigned long arg)
 {
-
 	 int err, size;
-	 //char led_val;
-	 //ioctl_test_info ctrl_info = {0,0,{0}};
 	 keyled_data ctrl_info = {0};
 	 KERNEL_TIMER_MANAGER* ptrmng =(KERNEL_TIMER_MANAGER *)filp->private_data;
 
@@ -329,31 +252,23 @@ static long call_ioctl (struct file *filp, unsigned int cmd, unsigned long arg)
 		 }
     switch( cmd )
     {
-		/*
-        case IOCTLTEST_INTVAL :
-			ctrl_info.time = diffTime;
-			err = copy_to_user((void *)arg, (void *)&ctrl_info, sizeof(ctrl_info));
-			if(err < 0)
-				return -1;
-            break;
-			*/
 		case TIMER_START :
-			kerneltimer_registertimer( ptrmng, TIME_STEP);
+			if(!(timer_pending(&(ptrmng->timer))))
+				kerneltimer_registertimer( ptrmng, ptrmng->time_val);
 			break;
 		case TIMER_STOP :
 			if(timer_pending(&(ptrmng->timer)))
 				del_timer(&(ptrmng->timer));
 			break;
 		case TIMER_VALUE :
+			// err = copy_from_user((void *)&ctrl_info, (void *)arg, size);
 			err = copy_from_user((void *)&ctrl_info, (void *)arg, sizeof(ctrl_info));
-			TIME_STEP = ctrl_info.timer_val;
+			ptrmng->time_val = (int)ctrl_info.timer_val;
 			break;
         default:
             break;
     }
     return 0;
-    //printk( "call ioctl -> cmd : %08X, arg : %08X \n", cmd, (unsigned int)arg );
-    //return 0x53;
 }
 
 
@@ -392,39 +307,6 @@ struct file_operations call_fops =
     .open     = call_open,     
     .release  = call_release,  
 };
-
-/*
-int call_init(void)
-{
-    int result;
-
-    printk( "call call_init \n" );    
-
-    result = register_chrdev( CALL_DEV_MAJOR, CALL_DEV_NAME, &call_fops);
-    if (result < 0) return result;
-
-	led_init();
-	//key_init();
-	key_irq_init(); // key interrupt initialize
-
-	curTime = get_jiffies_64();
-	printk("### curTime : %llu \n");
-	preTime = curTime;
-
-    return 0;
-}
-*/
-
-/*
-void call_exit(void)
-{
-    printk( "call call_exit \n" );    
-    unregister_chrdev( CALL_DEV_MAJOR, CALL_DEV_NAME );
-	led_exit();
-	//key_exit();
-	key_irq_exit();
-}
-*/
 
 int kerneltimer_init(void)
 {
