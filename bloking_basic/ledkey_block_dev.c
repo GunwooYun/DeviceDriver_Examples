@@ -1,3 +1,8 @@
+/*
+   device driver blocking
+   blocking basic
+   p.383
+*/
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
