@@ -1,3 +1,10 @@
+/*
+   Device Driver timer
+   timer basic
+   file : kerneltimer_dev.c
+   page : 319
+*/
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -21,9 +28,25 @@ static int timeval = 100;	//f=100HZ, T=1/100 = 10ms, 100*10ms = 1Sec
 module_param(timeval,int ,0);
 static int ledval = 0;
 module_param(ledval,int ,0);
+
+/*
+struct ci_otg_fsm_timer {
+    unsigned long expires;  * Number of count increase to timeout *
+    unsigned long count;    * Tick counter *
+    void (*function)(void *, unsigned long);        * Timeout function *
+    unsigned long data;     * Data passed to function *
+    struct list_head list;
+};
+
+struct ci_otg_fsm_timer_list {
+    struct ci_otg_fsm_timer *timer_list[NUM_CI_OTG_FSM_TIMERS];
+    struct list_head active_timers;
+};*/
+
+
 typedef struct
 {
-	struct timer_list timer;
+	struct timer_list timer; // detail above
 	unsigned long 	  led;
 } __attribute__ ((packed)) KERNEL_TIMER_MANAGER;
 
@@ -82,6 +105,7 @@ void led_write(char data)
 #endif
     }
 }
+
 void kerneltimer_registertimer(KERNEL_TIMER_MANAGER *pdata, unsigned long timeover)
 {
 	init_timer( &(pdata->timer) );
@@ -114,9 +138,9 @@ int kerneltimer_init(void)
 
 	ptrmng = (KERNEL_TIMER_MANAGER *)kmalloc( sizeof(KERNEL_TIMER_MANAGER ), GFP_KERNEL); //32byte
 	if(ptrmng == NULL) return -ENOMEM;
-	memset( ptrmng, 0, sizeof( KERNEL_TIMER_MANAGER));
+	memset( ptrmng, 0, sizeof( KERNEL_TIMER_MANAGER)); // set 0
 	ptrmng->led = ledval;
-	kerneltimer_registertimer( ptrmng, TIME_STEP);
+	kerneltimer_registertimer( ptrmng, TIME_STEP); // Register timer
 	return 0;
 }
 void kerneltimer_exit(void)
