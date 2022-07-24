@@ -1,3 +1,8 @@
+/*
+   device driver proc file system
+   gpio conrol with proc file system
+   page : 517
+*/
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
