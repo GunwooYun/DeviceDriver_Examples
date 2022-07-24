@@ -27,3 +27,5 @@
 * deviceDrvier_interrupt_basic : 인터럽트를 이용한 GPIO 값 read / p.343   
 ### Timer
 * kernelTimer_basic : 커널타이머 기본 예제 / p.319   
+* kernelTimer_dev : 커널타이머 디바이스드라이버 / p.333   
+* 
