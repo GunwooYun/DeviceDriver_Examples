@@ -36,6 +36,8 @@
 
 ### blocking
 * blocking_basic : 블로킹 I/O basic / p.383   
+* blocking_poll : 다중입출력 poll / p.424   
+* 
 ### etc
 * localtimer : 로컬 타이머 예제   
 * udoo_examples : udoo board 예제   
