@@ -25,3 +25,5 @@
 * deviceDriver_string : read(), write() 함수에 문자열 처리 실습   
 * deviceDriver_minor : minor 번호에 따라 operation 변경 실행 / p.264   
 * deviceDrvier_interrupt_basic : 인터럽트를 이용한 GPIO 값 read / p.343   
+### Timer
+* kernelTimer_basic : 커널타이머 기본 예제 / p.319   
