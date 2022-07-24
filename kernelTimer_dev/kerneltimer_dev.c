@@ -1,3 +1,9 @@
+/*
+   Device Driver kernel timer
+   kernel timer with app
+   drvier name : kerneltimer
+   page : 333
+*/
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -127,12 +133,12 @@ void kerneltimer_timeover(unsigned long arg)
 	if( arg )
 	{
 		pdata = ( KERNEL_TIMER_MANAGER *)arg;
-		led_write(pdata->led & 0x0f);
+		led_write(pdata->led & 0x0f); // Get value from pdata->led
 #if DEBUG
 		printk("led : %#04x, key : %#04x \n",(unsigned int)(pdata->led & 0x0000000f),(unsigned int)pdata->key);
 #endif
-		pdata->led = ~(pdata->led);
-		kerneltimer_registertimer( pdata, TIME_STEP);
+		pdata->led = ~(pdata->led); // toggle
+		kerneltimer_registertimer( pdata, TIME_STEP); // excute function again
 		printk("registertimer func end \n");
 	}
 }

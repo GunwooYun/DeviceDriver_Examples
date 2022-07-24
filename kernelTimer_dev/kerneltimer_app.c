@@ -1,3 +1,9 @@
+/*
+   Device Driver kernel timer
+   kernel timer with app
+   drvier file : /dev/kerneltimer
+   page : 333
+*/
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
